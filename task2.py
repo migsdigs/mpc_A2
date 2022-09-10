@@ -37,39 +37,44 @@ sim_env = EmbeddedSimEnvironment(model=bumble,
                                  controller=u_star,
                                  time=30.0)
 t, y, u = sim_env.run(x0, x_ref=x_full_ref)
+
+# TODO: RUN FOR QUESTION 4
 # sim_env.visualize_error()
 # NOTE: You can further observe what the prediction for the solver is, versus the actual state
 # sim_env.visualize_prediction_vs_reference(x_pred=x_star, x_ref=x_full_ref, control=u_star)
-sim_env.visualize_state_vs_reference(state=y, ref=x_full_ref, control=u_star)
+# sim_env.visualize_state_vs_reference(state=y, ref=x_full_ref, control=u_star)
 
-# # Activate broken thruster and re-run
+
+# TODO: RUN FOR QUESTION 5 & 6
+# Activate broken thruster and re-run
 # sim_env.broken_thruster()
 # t, y, u = sim_env.run(x0, x_ref=x_full_ref)
 # sim_env.visualize_error()
 
-# # Get the system discrete-time dynamics with Z
-# queen = Astrobee(axis="3d")
-# A, B = queen.cartesian_3d_dynamics()
-# Ad, Bd, Cd, Dd = queen.casadi_c2d(A, B, np.eye(8), np.zeros((8, 4)))
-# queen.set_discrete_dynamics(Ad, Bd)
+# # TODO: RUN FOR QUESTION 7
+# Get the system discrete-time dynamics with Z
+queen = Astrobee(axis="3d")
+A, B = queen.cartesian_3d_dynamics()
+Ad, Bd, Cd, Dd = queen.casadi_c2d(A, B, np.eye(8), np.zeros((8, 4)))
+queen.set_discrete_dynamics(Ad, Bd)
 
-# # Get controller for 3D
-# R = np.eye(4) * 10
-# ctl_wz = FiniteOptimization(queen, queen.linearized_discrete_dynamics,
-#                             total_time=40.0, rendezvous_time=25.0, ref_type="3d",
-#                             R=R)
+# Get controller for 3D
+R = np.eye(4) * 10
+ctl_wz = FiniteOptimization(queen, queen.linearized_discrete_dynamics,
+                            total_time=40.0, rendezvous_time=25.0, ref_type="3d",
+                            R=R)
 
-# honey.set_trajectory(time=40.0, type="3d")
-# x_r = honey.get_trajectory(t_start=25.0)
-# x_full_ref = honey.get_trajectory(t_start=0.0)
+honey.set_trajectory(time=40.0, type="3d")
+x_r = honey.get_trajectory(t_start=25.0)
+x_full_ref = honey.get_trajectory(t_start=0.0)
 
-# x0 = np.array([[0.1, 0, 0, 0, 0, 0, 0.01, 0]]).T
-# x_star, u = ctl_wz.solve_problem(x0, x_r)
+x0 = np.array([[0.1, 0, 0, 0, 0, 0, 0.01, 0]]).T
+x_star, u = ctl_wz.solve_problem(x0, x_r)
 
-# # Simulate 3D
-# sim_env = EmbeddedSimEnvironment(model=queen,
-#                                  dynamics=queen.linearized_discrete_dynamics,
-#                                  controller=u,
-#                                  time=40.0)
-# t, y, u = sim_env.run(x0, x_ref=x_full_ref)
-# sim_env.visualize_error()
+# Simulate 3D
+sim_env = EmbeddedSimEnvironment(model=queen,
+                                 dynamics=queen.linearized_discrete_dynamics,
+                                 controller=u,
+                                 time=40.0)
+t, y, u = sim_env.run(x0, x_ref=x_full_ref)
+sim_env.visualize_error()
