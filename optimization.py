@@ -41,10 +41,10 @@ class FiniteOptimization(object):
         build_solver_time = -time.time()
         self.dt = model.dt
         self.model = model
-        self.Nx, self.Nu = model.n, model.m
-        self.Nt = int(total_time / self.dt)
-        self.Ntr = int(rendezvous_time / self.dt)
-        self.dynamics = dynamics
+        self.Nx, self.Nu = model.n, model.m         # Number of states, number of inputs
+        self.Nt = int(total_time / self.dt)         # total time steps    
+        self.Ntr = int(rendezvous_time / self.dt)   # rendezvous time steps
+        self.dynamics = dynamics                    # dynamics (A)
 
         if ref_type == "2d":
             self.Nr = 3
@@ -59,6 +59,7 @@ class FiniteOptimization(object):
             self.pos_tol = 0.001 * np.ones((3, 1))
             self.att_tol = 0.001
 
+        # Input upper and lower bounds
         if u_lim is not None:
             u_lb = -u_lim
             u_ub = u_lim
@@ -114,12 +115,22 @@ class FiniteOptimization(object):
                 # Make sure that we target the reference then
                 if ref_type == "2d":
                     x_ref = x_t_ref[(r_i * self.Nr):(r_i * self.Nr + self.Nr)]
+                  # x_ref = x_t_f[(r_i * 3):(r_i * 3 + 3)]  
 
                     # TODO: use 'x_ref', 'x_t', 'self.pos_tol' and 'self.att_tol'
                     #       to define the maximum error tolerance for the position
                     #       in X, Y and angle theta, by adjusting 'con_ineq',
                     #       'con_ineq_ub' and 'con_ineq_lb' - take inspiration from
                     #       the example below for 3D
+
+                    con_ineq.append(x_ref[0:2] - x_t[0:2])
+                    con_ineq_ub.append(self.pos_tol)
+                    con_ineq_lb.append(-self.pos_tol)
+
+                    con_ineq.append(x_ref[2] - x_t[4])
+                    con_ineq_ub.append(self.att_tol)
+                    con_ineq_lb.append(-self.att_tol)
+
                 else:
                     x_ref = x_t_ref[(r_i * self.Nr):(r_i * self.Nr + self.Nr)]
 
