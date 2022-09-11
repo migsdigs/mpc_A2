@@ -40,7 +40,7 @@ t, y, u = sim_env.run(x0, x_ref=x_full_ref)
 
 # TODO: RUN FOR QUESTION 4
 # sim_env.visualize_error()
-# NOTE: You can further observe what the prediction for the solver is, versus the actual state
+# # NOTE: You can further observe what the prediction for the solver is, versus the actual state
 # sim_env.visualize_prediction_vs_reference(x_pred=x_star, x_ref=x_full_ref, control=u_star)
 # sim_env.visualize_state_vs_reference(state=y, ref=x_full_ref, control=u_star)
 
